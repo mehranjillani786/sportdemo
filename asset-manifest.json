@@ -1,0 +1,12 @@
+{
+  "files": {
+    "main.js": "/sportdemo/static/js/main.e49cfe49.js",
+    "static/js/787.cda612ba.chunk.js": "/sportdemo/static/js/787.cda612ba.chunk.js",
+    "index.html": "/sportdemo/index.html",
+    "main.e49cfe49.js.map": "/sportdemo/static/js/main.e49cfe49.js.map",
+    "787.cda612ba.chunk.js.map": "/sportdemo/static/js/787.cda612ba.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.e49cfe49.js"
+  ]
+}

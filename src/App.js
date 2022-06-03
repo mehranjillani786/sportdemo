@@ -11,10 +11,10 @@ function App() {
   return (
     <>
       {/* <Tabs /> */}
-      <BrowserRouter>
+      <BrowserRouter basename={process.env.PUBLIC_URL}>
         {/* <Hidden smUp> */}
           <Routes>
-            <Route path='/' element={ <Navigate to="/group" replace={true} />}/>
+            <Route exact path='/' element={ <h1>author: mehran</h1>}/>
             <Route path="/group" element={<Tabs />} />
             <Route path="/group/:id" element={<UnderGroups />} />
             <Route path="/sports/:id" element={<UnderGroupDetail />} />

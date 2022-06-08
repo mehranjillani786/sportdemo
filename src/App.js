@@ -12,6 +12,7 @@ function App() {
   return (
     <>
       {/* <Tabs /> */}
+      <h1>Hello</h1>
       <BrowserRouter basename={process.env.PUBLIC_URL}>
          
         {/* <Hidden smUp> */}

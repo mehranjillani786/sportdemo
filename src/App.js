@@ -11,8 +11,7 @@ import SessionDetails from "./components/sessions/SessionDetail";
 function App() {
   return (
     <>
-      {/* <Tabs /> */}
-      <h1>Hello</h1>
+      {/* <Tabs /> */} 
       <BrowserRouter basename={process.env.PUBLIC_URL}>
          
         {/* <Hidden smUp> */}

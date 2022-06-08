@@ -19,12 +19,17 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ImageIcon from '@material-ui/icons/Image';
 import Avatar from '@material-ui/core/Avatar';
 import { createBrowserHistory } from 'history';
-import { my_groups } from "../data"
+import { my_groups, session } from "../data"
 import UnderGroupItem from './UnderGroupItem';
-import { Button, InputAdornment, List, TextField } from '@material-ui/core';
+import { Box, Button, Grid, InputAdornment, List, TextField } from '@material-ui/core';
 import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
-
-
+import CalendarTodayOutlinedIcon from '@material-ui/icons/CalendarTodayOutlined';
+import EventOutlinedIcon from '@material-ui/icons/EventOutlined';
+import FlashOnIcon from '@material-ui/icons/FlashOn';
+import ApartmentOutlinedIcon from '@material-ui/icons/ApartmentOutlined';
+import ConfirmationNumberOutlinedIcon from '@material-ui/icons/ConfirmationNumberOutlined';
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import SessionItem from '../sessions/SessionItem';
 const useStyles = makeStyles((theme) => ({
     root: {
         width: '100%',
@@ -42,6 +47,15 @@ const useStyles = makeStyles((theme) => ({
         height: theme.spacing(6),
         marginRight: theme.spacing(0.5),
     },
+    iconList: {
+        marginTop: theme.spacing(5),
+    },
+    avatarIcon: {
+        backgroundColor: "#fff",
+        border: `1px solid #5f5f5f`,
+        color: "#5f5f5f",
+        padding: theme.spacing(0.7)
+    },
     small: {
         width: theme.spacing(4),
         height: theme.spacing(4),
@@ -51,12 +65,12 @@ const useStyles = makeStyles((theme) => ({
         display: 'block'
     },
     button: {
-        marginBottom:"0.5rem",
-        background:"#ff3601",
-        color:"#fffefe",
+        marginBottom: "0.5rem",
+        background: "#ff3601",
+        color: "#fffefe",
         position: "absolute",
         bottom: "-25px",
-       right: "15px"
+        right: "15px"
     },
     menubar: {
         background: "#d9d9d9",
@@ -85,6 +99,47 @@ const useStyles = makeStyles((theme) => ({
             }
         }
     },
+    dateSubtitle: {
+        fontSize: "11px",
+        textAlign: "center",
+        fontWeight: "700",
+        paddingLeft: "10px"
+
+    },
+    subtitle: {
+        fontSize: "0.8rem",
+        textAlign: "center",
+        margin: "4px -4px",
+        fontWeight: "600",
+        width: "55px",
+        padding: "5px",
+        fontSize: "9px",
+        borderRadius: "10px",
+        lineHeight: "1"
+    },
+    green: {
+        background: "#73d131"
+    },
+    blue: {
+        background: "#b4dceb"
+    },
+    purple: {
+        background: "#d9d9d9"
+    },
+    orange: {
+        background: "#ffbd59",
+    },
+    red: {
+        background: "#ff5757"
+    },
+    headingSubtitle: {
+        width: "90px",
+        padding: "2px",
+        fontSize: "11px",
+        textAlign: "center",
+        fontWeight: "500",
+        borderRadius: "10px"
+    }
 }));
 
 export default function UnderGroupDetail() {
@@ -92,62 +147,106 @@ export default function UnderGroupDetail() {
     let { id } = useParams();
     const location = useLocation()
     return (
-        <div className={classes.grow}>
-            <AppBar position="static" className={classes.menubar}>
-                <Toolbar>
-                    <IconButton
-                        edge="start"
-                        className={classes.menuButton}
-                        color="inherit"
-                        component={Link}
-                        to={`/group/${location?.state?.group}`}
-                        aria-label="open drawer"
-                    >
-                        <ArrowBackIcon />
-                    </IconButton>
-                    {my_groups.find(s => s.id == id)?.image !== "" ?
-                        <Avatar src={my_groups.find(s => s.id == location?.state?.group)?.image} className={classes.small}>
-                            <ImageIcon />
-                        </Avatar>
-                        :
-                        <Avatar className={classes.small}>
-                            <ImageIcon />
-                        </Avatar>
-                    }
-                    <Typography className={classes.title} variant="h6" noWrap>
-                        {my_groups.find(s => s.id == location?.state?.group)?.title}
-                    </Typography>
+        <>
+            <div className={classes.grow}>
+                <AppBar position="static" className={classes.menubar}>
+                    <Toolbar>
+                        <IconButton
+                            edge="start"
+                            className={classes.menuButton}
+                            color="inherit"
+                            component={Link}
+                            to={`/group/${location?.state?.group}`}
+                            aria-label="open drawer"
+                        >
+                            <ArrowBackIcon />
+                        </IconButton>
+                        {my_groups.find(s => s.id == id)?.image !== "" ?
+                            <Avatar src={my_groups.find(s => s.id == location?.state?.group)?.image} className={classes.small}>
+                                <ImageIcon />
+                            </Avatar>
+                            :
+                            <Avatar className={classes.small}>
+                                <ImageIcon />
+                            </Avatar>
+                        }
+                        <Typography className={classes.title} variant="h6" noWrap>
+                            {my_groups.find(s => s.id == location?.state?.group)?.title}
+                        </Typography>
 
-                    <div className={classes.grow} />
+                        <div className={classes.grow} />
 
-                    <Avatar alt="img" src={"https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"}
-                        className={classes.large} />
+                        <Avatar alt="img" src={"https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"}
+                            className={classes.large} />
 
-                </Toolbar>
-                <Toolbar>
+                    </Toolbar>
+                    <Toolbar>
 
-                    {location?.state?.image !== "" ?
-                        <Avatar src={location?.state?.image} className={classes.large}>
-                            <ImageIcon />
-                        </Avatar>
-                        :
-                        <Avatar className={classes.large}>
-                            <ImageIcon />
-                        </Avatar>
-                    }
-                    <Typography variant="h5" noWrap>
-                        {location?.state?.name}
-                    </Typography>
-                    <Button
-                        variant="contained"
-                        color="secondary" 
-                        className={classes.button} 
-                    >
-                        Create a Session
-                    </Button>
-                </Toolbar>
-            </AppBar>
+                        {location?.state?.image !== "" ?
+                            <Avatar src={location?.state?.image} className={classes.large}>
+                                <ImageIcon />
+                            </Avatar>
+                            :
+                            <Avatar className={classes.large}>
+                                <ImageIcon />
+                            </Avatar>
+                        }
+                        <Typography variant="h5" noWrap>
+                            {location?.state?.name}
+                        </Typography>
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            className={classes.button}
+                        >
+                            Create a Session
+                        </Button>
+                    </Toolbar>
+                </AppBar>
+            </div>
 
-        </div>
+            <Grid container display="flex" justifyContent="center" alignItems="center" className={classes.iconList}>
+                <Grid item xs>
+                    <Avatar className={classes.avatarIcon}>
+                        <CalendarTodayOutlinedIcon fontSize='medium' />
+                    </Avatar>
+                    <Typography variant="caption" component={"div"} className={`${classes.subtitle} ${classes.green}`}>Free Sessions</Typography>
+                </Grid>
+                <Grid item xs>
+                    <Avatar className={classes.avatarIcon}>
+                        <EventOutlinedIcon fontSize='medium' />
+                    </Avatar>
+                    <Typography variant="caption" component={"div"} className={`${classes.subtitle} ${classes.blue}`}>Paid Sessions</Typography>
+                </Grid>
+                <Grid item xs>
+                    <Avatar className={classes.avatarIcon}>
+                        <FlashOnIcon fontSize='medium' />
+                    </Avatar>
+                    <Typography variant="caption" component={"div"} className={`${classes.subtitle} ${classes.purple}`}>Events Tournaments</Typography>
+                </Grid>
+                <Grid item xs>
+                    <Avatar className={classes.avatarIcon}>
+                        <ApartmentOutlinedIcon fontSize='medium' />
+                    </Avatar>
+                    <Typography variant="caption" component={"div"} className={`${classes.subtitle} ${classes.orange}`}>Hall Rental</Typography>
+                </Grid>
+                <Grid item xs>
+                    <Avatar className={classes.avatarIcon}>
+                        <ConfirmationNumberOutlinedIcon fontSize='medium' />
+                    </Avatar>
+                    <Typography variant="caption" component={"div"} className={`${classes.subtitle} ${classes.red}`}>Coupons Vouchers</Typography>
+                </Grid>
+            </Grid>
+            <Box display="flex" spacing={1} alignItems="center">
+                <FiberManualRecordIcon style={{ color: "#ff3601" }} />
+                <Typography variant="caption" component={"div"} className={`${classes.dateSubtitle}`}>{new Date().toDateString()}</Typography>
+            </Box>
+            <div className={classes.flexGrow}></div>
+            <Typography variant="caption" component={"div"} className={`${classes.headingSubtitle} ${classes.green}`}>Free Sessions</Typography>
+             
+            {session.filter(s=>s.sportId==id).map((s,i)=>{
+                return <SessionItem session={{...s,...{group:location?.state?.group, locationState:location?.state}}} key={i}/>
+            })}   
+        </>
     );
 }

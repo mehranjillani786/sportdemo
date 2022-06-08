@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
 export default function UnderGroupItem({ sportItem }) {
     const classes = useStyles();
     const preventDefault = (event) => event.preventDefault();
-
+    
     return (
         <ListItem className={classes.list}>
             <ListItemAvatar>

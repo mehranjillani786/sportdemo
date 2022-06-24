@@ -59,7 +59,7 @@ export default function UnderGroupItem({ sportItem }) {
         <ListItem className={classes.list}>
             <ListItemAvatar>
                 {sportItem?.picture ?
-                    <Avatar alt="img" src={sportItem?.picture?.url} className={classes.large} /> :
+                    <Avatar alt="img" src={"https://docker81177-sportlink.hidora.com"+sportItem?.picture?.url} className={classes.large} /> :
                     <Avatar className={classes.large} >
                         <ImageIcon />
                     </Avatar>

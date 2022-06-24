@@ -1,28 +1,14 @@
 import React, { useState } from 'react';
-import { alpha, makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import InputBase from '@material-ui/core/InputBase';
-import Badge from '@material-ui/core/Badge';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
-import MenuIcon from '@material-ui/icons/Menu';
-import SearchIcon from '@material-ui/icons/Search';
-import AccountCircle from '@material-ui/icons/AccountCircle';
-import { Link, useLocation, useParams } from "react-router-dom"
-import MailIcon from '@material-ui/icons/Mail';
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import MoreIcon from '@material-ui/icons/MoreVert';
+import { Link, useParams } from "react-router-dom"
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ImageIcon from '@material-ui/icons/Image';
 import Avatar from '@material-ui/core/Avatar';
-import { createBrowserHistory } from 'history';
-import { my_groups, session } from "../data"
-import UnderGroupItem from './UnderGroupItem';
-import { Box, Button, Grid, InputAdornment, List, Slide, TextField } from '@material-ui/core';
-import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
+import { Box, Button, Grid, Slide, TextField } from '@material-ui/core';
 import CalendarTodayOutlinedIcon from '@material-ui/icons/CalendarTodayOutlined';
 import EventOutlinedIcon from '@material-ui/icons/EventOutlined';
 import FlashOnIcon from '@material-ui/icons/FlashOn';
@@ -33,9 +19,8 @@ import SessionItem from '../sessions/SessionItem';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import AddCircle from '@material-ui/icons/AddCircle';
+import { addSession, getSessionsByUnderGroupId } from '../../services/GroupService';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="down" ref={ref} {...props} />;
@@ -127,7 +112,7 @@ const useStyles = makeStyles((theme) => ({
 
     },
     subtitle: {
-        fontSize: "0.8rem",
+        // fontSize: "0.8rem",
         textAlign: "center",
         margin: "4px -4px",
         fontWeight: "600",
@@ -165,16 +150,44 @@ const useStyles = makeStyles((theme) => ({
 export default function UnderGroupDetail() {
     const classes = useStyles();
     let { id } = useParams();
-    const location = useLocation()
     const [open, setOpen] = useState(false);
+    const [group, setGroup] = useState(null);
+    const [state, setState] = useState(null);
 
     const handleClickOpen = () => {
         setOpen(true);
     };
 
+    const onChange = (event) => {
+        let { name, value } = event.target;
+        if(name ==='datetime'){
+            value = new Date(value).toISOString()
+        }
+        setState({
+          ...state,
+          [name]: value
+        });
+      }
+
     const handleClose = () => {
         setOpen(false);
     };
+    React.useEffect(() => {
+        async function fetchData() {
+            let sportGroups = await getSessionsByUnderGroupId(id)
+            setGroup(sportGroups)
+        }
+        fetchData()
+    }, [id])
+
+    const createSession = async() => { 
+        let res = await addSession({...state,...{creator:"3018", group:group?.private_group?.id, sport_group:group?.id, private:true}})
+        let groups = group;
+        groups.sessions.push(res);
+        setGroup(groups)
+        setState(null)
+        handleClose()
+    }
     return (
         <>
             <div className={classes.grow}>
@@ -185,13 +198,13 @@ export default function UnderGroupDetail() {
                             className={classes.menuButton}
                             color="inherit"
                             component={Link}
-                            to={`/group/${location?.state?.group}`}
+                            to={`/group/${group?.private_group?.id}`}
                             aria-label="open drawer"
                         >
                             <ArrowBackIcon />
                         </IconButton>
-                        {my_groups.find(s => s.id == id)?.image !== "" ?
-                            <Avatar src={my_groups.find(s => s.id == location?.state?.group)?.image} className={classes.small}>
+                        {group?.private_group?.picture ?
+                            <Avatar src={group?.private_group?.picture?.url} className={classes.small}>
                                 <ImageIcon />
                             </Avatar>
                             :
@@ -200,7 +213,7 @@ export default function UnderGroupDetail() {
                             </Avatar>
                         }
                         <Typography className={classes.title} variant="h6" noWrap>
-                            {my_groups.find(s => s.id == location?.state?.group)?.title}
+                            {group?.private_group?.name}
                         </Typography>
 
                         <div className={classes.grow} />
@@ -211,8 +224,8 @@ export default function UnderGroupDetail() {
                     </Toolbar>
                     <Toolbar>
 
-                        {location?.state?.image !== "" ?
-                            <Avatar src={location?.state?.image} className={classes.large}>
+                        {group?.sport?.icon ?
+                            <Avatar src={group?.sport?.icon?.url} className={classes.large}>
                                 <ImageIcon />
                             </Avatar>
                             :
@@ -220,8 +233,8 @@ export default function UnderGroupDetail() {
                                 <ImageIcon />
                             </Avatar>
                         }
-                        <Typography variant="h5" noWrap>
-                            {location?.state?.name}
+                        <Typography variant="h6" noWrap>
+                            {group?.sport?.name}
                         </Typography>
                         <Button
                             variant="contained"
@@ -274,8 +287,8 @@ export default function UnderGroupDetail() {
             <div className={classes.flexGrow}></div>
             <Typography variant="caption" component={"div"} className={`${classes.headingSubtitle} ${classes.green}`}>Free Sessions</Typography>
 
-            {session.filter(s => s.sportId == id).map((s, i) => {
-                return <SessionItem session={{ ...s, ...{ group: location?.state?.group, locationState: location?.state } }} key={i} />
+            {group?.sessions.length > 0 && group?.sessions.map((s, i) => {
+                return <SessionItem session={{ ...s, ...{ group: group } }} key={i} />
             })}
 
             <Dialog
@@ -291,43 +304,47 @@ export default function UnderGroupDetail() {
 
                     <Grid container>
                         <Grid item xs={3}>
-                            <Avatar className={classes.large} >
+                            <Avatar className={classes.large} src={group?.private_group?.picture?.url}>
                                 <ImageIcon />
                             </Avatar>
                         </Grid>
                         <Grid item xs={9}>
-                            <Typography variant="h5" className={classes.modalHeading}>Banque pictet</Typography>
-                            <Typography variant="body2">Soccer</Typography>
+                            <Typography variant="h5" className={classes.modalHeading}>{group?.private_group?.name}</Typography>
+                            <Typography variant="body2">{group?.sport?.name}</Typography>
                         </Grid>
                     </Grid>
                     <br />
                     <Grid container spacing={1}>
-                        <Grid item xs={12}><TextField className={classes.textField} id="name" size="small" label="Enter Name" variant="outlined" /></Grid>
+                        <Grid item xs={12}><TextField className={classes.textField} onChange={onChange} id="name" size="small" name="name" label="Enter Name" variant="outlined" /></Grid>
                         <Grid item xs={12}><TextField
                             id="datetime-local"
                             label="Date"
                             type="datetime-local"
+                            onChange={onChange}
                             defaultValue={new Date()}
                             className={classes.textField}
+                            name="datetime"
                             variant="outlined"
                             InputLabelProps={{
                                 shrink: true,
                             }}
                         /></Grid>
-                        <Grid item xs={12}><TextField className={classes.textField} id="address" size="small" label="Enter Address" variant="outlined" /></Grid>
-                        <Grid item xs={12}><TextField className={classes.textField} type="number" inputProps={{ min: 1 }} id="duration" size="small" label="duration" variant="outlined" /></Grid>
-                        <Grid item xs={12}><TextField className={classes.textField} type="number" inputProps={{ min: 1 }} id="max_limit" size="small" label="Max. People Allowed" variant="outlined" /></Grid>
+                        <Grid item xs={12}><TextField className={classes.textField} name='address' onChange={onChange} id="address" size="small" label="Enter Address" variant="outlined" /></Grid>
+                        <Grid item xs={12}><TextField className={classes.textField} name='duration' onChange={onChange} type="number" inputProps={{ min: 1 }} id="duration" size="small" label="duration" variant="outlined" /></Grid>
+                        <Grid item xs={12}><TextField className={classes.textField} name='personCount' onChange={onChange} type="number" inputProps={{ min: 1 }} id="max_limit" size="small" label="Max. People Allowed" variant="outlined" /></Grid>
 
-                        <Grid item xs={12}> 
-                                <TextField
-                                    id="info"
-                                    label="Sport Info"
-                                    multiline
-                                    className={classes.textField}
-                                    rows={4}
-                                    placeholder="Write Information about session"
-                                    variant="outlined"
-                                />  
+                        <Grid item xs={12}>
+                            <TextField
+                                id="info"
+                                label="Sport Info"
+                                multiline
+                                name="spotInformation"
+                                onChange={onChange}
+                                className={classes.textField}
+                                rows={4}
+                                placeholder="Write Information about session"
+                                variant="outlined"
+                            />
                         </Grid>
 
                     </Grid>
@@ -337,7 +354,7 @@ export default function UnderGroupDetail() {
                     <Button
                         variant="contained"
                         color="secondary"
-                        onClick={handleClose}
+                        onClick={createSession}
                         className={classes.addBtn}
                         startIcon={<AddCircle />}
                     >

@@ -2,12 +2,10 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
-import ButtonBase from '@material-ui/core/ButtonBase';
+import Typography from '@material-ui/core/Typography'; 
 import {Link} from "react-router-dom"
-import { Avatar, Box, Divider } from '@material-ui/core';
-import SportsVolleyballOutlinedIcon from '@material-ui/icons/SportsVolleyballOutlined';
-import EventAvailableIcon from '@material-ui/icons/EventAvailable';
+import { Divider } from '@material-ui/core';
+import SportsVolleyballOutlinedIcon from '@material-ui/icons/SportsVolleyballOutlined'; 
 import QueryBuilderIcon from '@material-ui/icons/QueryBuilder';
 import RoomOutlinedIcon from '@material-ui/icons/RoomOutlined';
 import ConfirmationNumberOutlinedIcon from '@material-ui/icons/ConfirmationNumberOutlined';
@@ -59,55 +57,52 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "0.8rem"
   }, 
   subtitle: {
-    fontWeight: 600,
-    textTransform: "uppercase",
+    fontWeight: 600, 
     color:"#484848",
-    textDecoration:"none"
+    textDecoration:"none" 
 },
 }));
 
 export default function SessionItem({ session }) {
-  const classes = useStyles();
-  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thurs', 'Fri', 'Sat'];
-  let { id, title, author, img, date, time, max_people, location, sport } = session;
-  
+  const classes = useStyles(); 
+  let { id, name, datetime, personCount, address, group } = session; 
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
         <Grid container>
           <Grid item xs={4} className={classes.image}>
-            <img className={classes.img} alt="complex" src={img} />
+            <img className={classes.img} alt="complex" src={group?.sport?.icon?.url} />
           </Grid>
           <Grid item xs={8} sm container>
             <Grid item xs container direction="column" >
               <Grid item xs className={classes.p5}>
-                <Typography variant="subtitle1" className={classes.title}>
+                <Typography variant="subtitle1"  className={classes.title}>
                   <Link component={Link} className={classes.subtitle} to={`/session/${id}`} state={session}>
-                    {title}
+                    {name}
                   </Link>
                   <SportsVolleyballOutlinedIcon className={classes.icon} />
                 </Typography>
-                <Typography variant="body2" gutterBottom>
-                  by {author}
-                </Typography>
+                {/* <Typography variant="body2" gutterBottom>
+                  by creator
+                </Typography> */}
                 <Divider />
                 <Grid container className={classes.mainSection}>
                   <Grid item xs={6}>
                     <Typography variant="caption" className={classes.sessionDetails} >
                       <EventAvailableOutlinedIcon className={classes.sessionIcon} />
-                      {`${days[date.getUTCDay()]}. ${date.toLocaleDateString()}`}
+                      {new Date(datetime).toDateString()}
                     </Typography>
                   </Grid>
                   <Grid item xs={6}>
                     <Typography variant="caption" className={classes.sessionDetails} >
                       <QueryBuilderIcon className={classes.sessionIcon} />
-                      {time.toLocaleTimeString()}
+                      {new Date(datetime).toLocaleTimeString()}
                     </Typography>
                   </Grid>
                   <Grid item xs={6}>
                     <Typography variant="caption" className={classes.sessionDetails} >
                       <RoomOutlinedIcon className={classes.sessionIcon} />
-                      {location}
+                      {address}
                     </Typography>
                   </Grid>
                   <Grid item xs={6}>
@@ -119,13 +114,13 @@ export default function SessionItem({ session }) {
                   <Grid item xs={6}>
                     <Typography variant="caption" className={classes.sessionDetails} >
                       <GroupOutlinedIcon className={classes.sessionIcon} />
-                      {max_people}
+                      {personCount}
                     </Typography>
                   </Grid>
                   <Grid item xs={6}>
                     <Typography variant="caption" className={classes.sessionDetails} >
                       <PlayArrowOutlinedIcon className={classes.sessionIcon} />
-                      {sport}
+                      {group?.sport?.name}
                     </Typography>
                   </Grid>
                 </Grid>

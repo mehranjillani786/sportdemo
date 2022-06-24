@@ -54,15 +54,17 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export default function GroupItem({ groupItem, other = false, handleClickOpen }) {
+export default function GroupItem({ groupItem, other = false, setCurrentGroup,handleClickOpen }) {
     const classes = useStyles();
-    const preventDefault = (event) => event.preventDefault();
-
+     const handleOpen=()=>{
+        setCurrentGroup(groupItem)
+        handleClickOpen()
+     }
     return (
         <ListItem className={classes.list}>
             <ListItemAvatar>
-                {groupItem.image ?
-                    <Avatar alt="img" src={groupItem.image} className={classes.large} /> :
+                {groupItem.picture ?
+                    <Avatar alt="img" src={process.env.REACT_APP_BASE_URL+groupItem?.picture?.url} className={classes.large} /> :
                     <Avatar className={classes.large} >
                         <ImageIcon />
                     </Avatar>
@@ -70,17 +72,17 @@ export default function GroupItem({ groupItem, other = false, handleClickOpen })
             </ListItemAvatar>
             <ListItemText className={classes.title}
                 primary={other ?
-                    <Typography variant='subtitle1' className={classes.subtitle} component={"h6"}  >{groupItem.title}</Typography>
+                    <Typography variant='subtitle1' className={classes.subtitle} component={"h6"}  >{groupItem.name}</Typography>
                     : <Typography variant='subtitle1' className={classes.subtitle} component={"h6"} >
                         <Link component={Link} className={classes.subtitle} to={`/group/${groupItem.id}`}>
-                            {groupItem.title}
+                            {groupItem.name}
                         </Link>
                     </Typography>
                 }
-                secondary={<Typography variant='caption' component={"h6"}  >{groupItem.under_groups}
+                secondary={<Typography variant='caption' component={"h6"}  >{groupItem?.subgroups?.length} under groups
                     {other ? <Box display="flex" alignItems="center">
                         <AddCircleIcon className={classes.icon} />
-                        <Button  className={classes.button} onClick={handleClickOpen}>
+                        <Button  className={classes.button} onClick={handleOpen}>
                             Join Group
                         </Button>
                     </Box> : null}

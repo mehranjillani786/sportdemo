@@ -7,8 +7,6 @@ import ImageIcon from '@material-ui/icons/Image';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Typography } from '@material-ui/core';
 import {Link} from "react-router-dom"
-import Button from '@material-ui/core/Button';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import EventIcon from '@material-ui/icons/Event';
 import FlashOnIcon from '@material-ui/icons/FlashOn';
@@ -55,14 +53,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function UnderGroupItem({ sportItem }) {
-    const classes = useStyles();
-    const preventDefault = (event) => event.preventDefault();
+    const classes = useStyles(); 
     
     return (
         <ListItem className={classes.list}>
             <ListItemAvatar>
-                {sportItem.image ?
-                    <Avatar alt="img" src={sportItem.image} className={classes.large} /> :
+                {sportItem?.picture ?
+                    <Avatar alt="img" src={sportItem?.picture?.url} className={classes.large} /> :
                     <Avatar className={classes.large} >
                         <ImageIcon />
                     </Avatar>
@@ -70,8 +67,8 @@ export default function UnderGroupItem({ sportItem }) {
             </ListItemAvatar>
             <ListItemText className={classes.title}
                 primary={<Typography variant='subtitle1' className={classes.subtitle} component={"h6"} >
-                        <Link component={Link} className={classes.subtitle} to={`/sports/${sportItem.id}`} state={sportItem}>
-                            {sportItem.name}
+                        <Link component={Link} className={classes.subtitle} to={`/sports/${sportItem.id}`}>
+                            {sportItem?.description}
                         </Link>
                     </Typography>
                 }

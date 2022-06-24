@@ -8,10 +8,11 @@ import { Link, useParams } from "react-router-dom"
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ImageIcon from '@material-ui/icons/Image';
 import Avatar from '@material-ui/core/Avatar'; 
-import { my_groups } from "../data"
+// import { my_groups } from "../data"
 import UnderGroupItem from './UnderGroupItem';
 import { InputAdornment, List, TextField } from '@material-ui/core';
 import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
+import { getGroupDetail } from '../../services/GroupService';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -70,6 +71,27 @@ const useStyles = makeStyles((theme) => ({
 export default function UnderGroups() {
     const classes = useStyles();
     let { id } = useParams();
+    const [group,setGroup] = React.useState(null)
+    const [all_group,setAllGroup] = React.useState(null)
+  const [searchText, setSearchText] = React.useState("")
+
+    React.useEffect(() => {
+        async function fetchData() {
+          let group = await getGroupDetail(id)
+          setGroup(group)
+          setAllGroup(group?.subgroups)
+        }
+        fetchData()
+      }, [id]) 
+      const findGroup = (e) => { 
+        if (group !== undefined) {
+          setSearchText(e.target.value)
+          const results = all_group.filter(group =>
+            group.description.toLowerCase().includes(e.target.value.toLocaleLowerCase())
+          ) 
+          setGroup({...group,...{subgroups:results}}) 
+        }
+      }
     return (
         <div className={classes.grow}>
             <AppBar position="static" className={classes.menubar}>
@@ -84,9 +106,8 @@ export default function UnderGroups() {
                     >
                         <ArrowBackIcon />
                     </IconButton>
-                    {my_groups.find(s => s.id === parseInt(id))?.image !== "" ?
-                        <Avatar src={my_groups.find(s => s.id === parseInt(id))?.image} className={classes.small}>
-                            <ImageIcon />
+                    {group?.picture ?
+                        <Avatar src={"https://docker81177-sportlink.hidora.com"+group?.picture?.url} className={classes.small}>
                         </Avatar>
                         :
                         <Avatar className={classes.small}>
@@ -94,7 +115,7 @@ export default function UnderGroups() {
                         </Avatar>
                     }
                     <Typography className={classes.title} variant="h6" noWrap>
-                        {my_groups.find(s => s.id === parseInt(id))?.title}
+                        {group?.name}
                     </Typography>
 
                     <div className={classes.grow} />
@@ -109,7 +130,9 @@ export default function UnderGroups() {
                 size="small"
                 label="Filter"
                 id="outlined-basic"
+                value={searchText}
                 className={classes.textField}
+                onChange={e => findGroup(e)}
                 InputProps={{
                     startAdornment: <InputAdornment position="start">
                         <SearchOutlinedIcon />
@@ -117,7 +140,7 @@ export default function UnderGroups() {
                 }}
             />
             <List className={classes.root} dense={true}>
-                {my_groups.find(s => s.id === parseInt(id))?.sports.map((s, i) => {
+                {group?.subgroups.map((s, i) => {
                     return <UnderGroupItem sportItem={{...s,...{group:id}}} key={i} />
                 })}
             </List>

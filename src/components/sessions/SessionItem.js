@@ -64,45 +64,47 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SessionItem({ session }) {
-  const classes = useStyles(); 
-  let { id, name, datetime, personCount, address, group } = session; 
+  const classes = useStyles();
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thurs', 'Fri', 'Sat'];
+  let { id, title, author, img, date, time, max_people, location, sport } = session;
+  
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
         <Grid container>
           <Grid item xs={4} className={classes.image}>
-            <img className={classes.img} alt="complex" src={group?.sport?.icon?.url} />
+            <img className={classes.img} alt="complex" src={img} />
           </Grid>
           <Grid item xs={8} sm container>
             <Grid item xs container direction="column" >
               <Grid item xs className={classes.p5}>
                 <Typography variant="subtitle1"  className={classes.title}>
                   <Link component={Link} className={classes.subtitle} to={`/session/${id}`} state={session}>
-                    {name}
+                    {title}
                   </Link>
                   <SportsVolleyballOutlinedIcon className={classes.icon} />
                 </Typography>
-                {/* <Typography variant="body2" gutterBottom>
-                  by creator
-                </Typography> */}
+                <Typography variant="body2" gutterBottom>
+                  by {author}
+                </Typography>
                 <Divider />
                 <Grid container className={classes.mainSection}>
                   <Grid item xs={6}>
                     <Typography variant="caption" className={classes.sessionDetails} >
                       <EventAvailableOutlinedIcon className={classes.sessionIcon} />
-                      {new Date(datetime).toDateString()}
+                      {`${days[date.getUTCDay()]}. ${date.toLocaleDateString()}`}
                     </Typography>
                   </Grid>
                   <Grid item xs={6}>
                     <Typography variant="caption" className={classes.sessionDetails} >
                       <QueryBuilderIcon className={classes.sessionIcon} />
-                      {new Date(datetime).toLocaleTimeString()}
+                      {time.toLocaleTimeString()}
                     </Typography>
                   </Grid>
                   <Grid item xs={6}>
                     <Typography variant="caption" className={classes.sessionDetails} >
                       <RoomOutlinedIcon className={classes.sessionIcon} />
-                      {address}
+                      {location}
                     </Typography>
                   </Grid>
                   <Grid item xs={6}>
@@ -114,13 +116,13 @@ export default function SessionItem({ session }) {
                   <Grid item xs={6}>
                     <Typography variant="caption" className={classes.sessionDetails} >
                       <GroupOutlinedIcon className={classes.sessionIcon} />
-                      {personCount}
+                      {max_people}
                     </Typography>
                   </Grid>
                   <Grid item xs={6}>
                     <Typography variant="caption" className={classes.sessionDetails} >
                       <PlayArrowOutlinedIcon className={classes.sessionIcon} />
-                      {group?.sport?.name}
+                      {sport}
                     </Typography>
                   </Grid>
                 </Grid>

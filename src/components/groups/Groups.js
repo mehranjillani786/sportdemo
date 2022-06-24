@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import GroupItem from './GroupItem';
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
@@ -6,10 +6,10 @@ import Avatar from '@material-ui/core/Avatar';
 import ImageIcon from '@material-ui/icons/Image';
 import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
 import { Typography, Grid, TextField, InputAdornment, Button, FormControlLabel, Checkbox, Dialog, DialogActions, Slide, DialogContent } from '@material-ui/core';
-// import { my_groups as myGroups, other_groups } from "../data"
+import { my_groups as myGroups, other_groups } from "../data"
 import { Heading } from '..';
 import SendIcon from '@material-ui/icons/Send';
-import { getGroups, joinGroup, saveRequest } from "../../services/GroupService"
+
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
@@ -70,14 +70,8 @@ export default function Groups() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [showMsgArea, setShowMsgArea] = React.useState(false);
-  const [state, setState] = React.useState({ code: "", message: "" });
-  const [my_groups, setMyGroup] = React.useState([])
-  const [other_groups, setOtherGroup] = React.useState([])
-  const [all_groups, setAllGroup] = React.useState([])
-  const [currentGroup, setCurrentGroup] = React.useState(null)
+  const [my_groups, setMyGroup] = React.useState(myGroups)
   const [searchText, setSearchText] = React.useState("")
-  let userId = 3004//JSON.parse(localStorage.getItem("authState"))?.user?.id || 3004;  //get login userId when user is loggedin
-
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -85,84 +79,40 @@ export default function Groups() {
   const handleClose = () => {
     setOpen(false);
   };
-
-  const findGroup = (e) => {
-    if (my_groups !== undefined) {
-      setSearchText(e.target.value)
-      const results = all_groups.filter(group =>
-        group.name.toLowerCase().includes(e.target.value.toLocaleLowerCase())
+ 
+  const findGroup = useCallback(() => {
+    if (my_groups !== undefined) { 
+      const results = myGroups.filter(group =>
+        group.title.toLowerCase().includes(searchText.toLocaleLowerCase())
       )
-      setMyGroup(results.filter(g => g.members.some(m => m.id === userId)))
-      setOtherGroup(results.filter(g => !g.members.some(m => m.id === userId)))
-    }
+      setMyGroup(results) 
   }
-
-  const sendRequest = async () => {
-    if (state && state.code === "" && !showMsgArea) {
-      alert("PLease Add Code.")
-      return
-    } else if (showMsgArea && state.message === '') {
-      alert("PLease Enter Message.")
-      return
-    }
-    else if (state && state.code !== "" && !showMsgArea) {
-      if (state && currentGroup && state?.code === currentGroup?.code) {
-        // check code and group code and add memeber in to members array
-        joinGroup(userId, currentGroup)
-
-      } else {
-        alert("Code is incorrect")
-      }
-    } else if (state && state.message !== "" && showMsgArea) {
-      saveRequest({ message: state.message, privateGroup: currentGroup, user: userId })
-    }
-    let groups = await getGroups()
-    setMyGroup(groups.filter(g => g.members.some(m => m.id === userId)))
-    setOtherGroup(groups.filter(g => !g.members.some(m => m.id === userId)))
-    setAllGroup(groups)
-    handleClose()
-    setState({ code: "", messsage: "" })
-  }
-
-
+  }, [my_groups,searchText])
+  
   React.useEffect(() => {
-    async function fetchData() {
-      let groups = await getGroups()
-      setMyGroup(groups.filter(g => g.members.some(m => m.id === userId)))
-      setOtherGroup(groups.filter(g => !g.members.some(m => m.id === userId)))
-      setAllGroup(groups)
-    }
-    fetchData()
-  }, [userId])
-  const onChange = (event) => {
-    let { name, value } = event.target;
-    setState({
-      ...state,
-      [name]: value
-    });
-  }
-
+    findGroup()
+  }, [searchText])
   return (
     <div>
-      {all_groups && all_groups.length > 2 ? <TextField
+      <TextField
         variant="outlined"
         size="small"
         label="Filter"
         id="outlined-basic"
         value={searchText}
         className={classes.textField}
-        onChange={e => findGroup(e)}
+        onChange={e => setSearchText(e.target.value)}
         InputProps={{
           startAdornment: <InputAdornment position="start">
             <SearchOutlinedIcon />
           </InputAdornment>
         }}
-      /> : null}
+      />
       <List className={classes.root} dense={true}>
-        {my_groups.length > 0 && <Heading heading="My group" />}
+        <Heading heading="My group" />
         {my_groups.map((g, index) => <GroupItem groupItem={g} key={index} handleClickOpen={handleClickOpen} />)}
-        {other_groups.length > 0 && <Heading heading="Other group" />}
-        {other_groups.map((g, index) => <GroupItem groupItem={g} other={true} key={index} setCurrentGroup={setCurrentGroup} handleClickOpen={handleClickOpen} />)}
+        <Heading heading="Other group" />
+        {other_groups.map((g, index) => <GroupItem groupItem={g} other={true} key={index} handleClickOpen={handleClickOpen} />)}
 
       </List>
       <Dialog
@@ -178,20 +128,20 @@ export default function Groups() {
 
           <Grid container>
             <Grid item xs={3}>
-              <Avatar className={classes.large} src={currentGroup?.picture?.url}>
+              <Avatar className={classes.large} >
                 <ImageIcon />
               </Avatar>
             </Grid>
             <Grid item xs={9}>
-              <Typography variant="h5" className={classes.modalHeading}>{currentGroup?.name}</Typography>
-              <Typography variant="body2">Join {currentGroup?.name}</Typography>
+              <Typography variant="h5" className={classes.modalHeading}>unicef sports</Typography>
+              <Typography variant="body2">Join unicef sports</Typography>
             </Grid>
           </Grid>
           <br />
           <Grid container spacing={1}>
-            {/* <Grid item xs={12}><TextField className={classes.textField} id="name" size="small" label="Enter Name" variant="outlined" /></Grid>
-            <Grid item xs={12}><TextField className={classes.textField} id="family-name" size="small" label="Enter Family Name" variant="outlined" /></Grid> */}
-            <Grid item xs={12}><TextField className={classes.textField} onChange={onChange} name="code" id="code" size="small" label="Enter Verification Code" variant="outlined" /></Grid>
+            <Grid item xs={12}><TextField className={classes.textField} id="name" size="small" label="Enter Name" variant="outlined" /></Grid>
+            <Grid item xs={12}><TextField className={classes.textField} id="family-name" size="small" label="Enter Family Name" variant="outlined" /></Grid>
+            <Grid item xs={12}><TextField className={classes.textField} id="code" size="small" label="Enter Verification Code" variant="outlined" /></Grid>
 
             <Grid container item xs={12}>
               <FormControlLabel
@@ -205,8 +155,6 @@ export default function Groups() {
                   id="Message"
                   label="Message"
                   multiline
-                  name='message'
-                  onChange={onChange}
                   className={classes.textField}
                   rows={4}
                   placeholder="Explain your request motivations"
@@ -222,7 +170,7 @@ export default function Groups() {
           <Button
             variant="contained"
             color="secondary"
-            onClick={sendRequest}
+            onClick={handleClose}
             className={classes.button}
             startIcon={<SendIcon />}
           >

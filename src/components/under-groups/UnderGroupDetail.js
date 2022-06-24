@@ -225,7 +225,7 @@ export default function UnderGroupDetail() {
                     <Toolbar>
 
                         {group?.sport?.icon ?
-                            <Avatar src={group?.sport?.icon?.url} className={classes.large}>
+                            <Avatar src={"https://docker81177-sportlink.hidora.com"+group?.sport?.icon?.url} className={classes.large}>
                                 <ImageIcon />
                             </Avatar>
                             :

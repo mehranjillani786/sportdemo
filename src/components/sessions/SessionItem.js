@@ -71,7 +71,7 @@ export default function SessionItem({ session }) {
       <Paper className={classes.paper}>
         <Grid container>
           <Grid item xs={4} className={classes.image}>
-            <img className={classes.img} alt="complex" src={group?.sport?.icon?.url} />
+            <img className={classes.img} alt="complex" src={"https://docker81177-sportlink.hidora.com"+group?.sport?.icon?.url} />
           </Grid>
           <Grid item xs={8} sm container>
             <Grid item xs container direction="column" >

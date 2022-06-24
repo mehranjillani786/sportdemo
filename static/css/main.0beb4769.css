@@ -1,0 +1,2 @@
+.loading-indicator:before{background:#000000cc;content:"";height:100%;left:0;position:fixed;top:0;width:100%;z-index:1000}.loading-indicator:after{color:#fff;content:"Loading...";font-size:1.5rem;font-weight:700;left:0;position:fixed;text-align:center;top:50%;width:100%;z-index:1001}
+/*# sourceMappingURL=main.0beb4769.css.map*/

@@ -1,9 +1,10 @@
 import axios from 'axios'; 
  
 
+const base_url = "https://docker81177-sportlink.hidora.com"
 
 export const apiRequest = (method, uri, body, header) => {
-  const url = `${process.env.REACT_APP_BASE_URL}${uri}`;
+  const url = `${base_url}${uri}`;
   const httpMethod = method.toUpperCase();
 
   const requestOptions = {
@@ -22,7 +23,7 @@ export const apiRequestAxio = (method, uri, body) => {
   const httpMethod = method.toUpperCase(); 
   document.body.classList.add('loading-indicator');
   const requestOptions = {
-    url: `${uri}`,
+    url: `${base_url}${uri}`,
     method: method.toUpperCase(),
     headers:{ "Content-Type": "application/json" }
   };

@@ -178,7 +178,7 @@ export default function Groups() {
 
           <Grid container>
             <Grid item xs={3}>
-              <Avatar className={classes.large} src={currentGroup?.picture?.url}>
+              <Avatar className={classes.large} src={"https://docker81177-sportlink.hidora.com"+currentGroup?.picture?.url}>
                 <ImageIcon />
               </Avatar>
             </Grid>

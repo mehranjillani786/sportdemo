@@ -204,7 +204,7 @@ export default function UnderGroupDetail() {
                             <ArrowBackIcon />
                         </IconButton>
                         {group?.private_group?.picture ?
-                            <Avatar src={group?.private_group?.picture?.url} className={classes.small}>
+                            <Avatar src={"https://docker81177-sportlink.hidora.com"+group?.private_group?.picture?.url} className={classes.small}>
                                 <ImageIcon />
                             </Avatar>
                             :
@@ -304,7 +304,7 @@ export default function UnderGroupDetail() {
 
                     <Grid container>
                         <Grid item xs={3}>
-                            <Avatar className={classes.large} src={group?.private_group?.picture?.url}>
+                            <Avatar className={classes.large} src={"https://docker81177-sportlink.hidora.com"+group?.private_group?.picture?.url}>
                                 <ImageIcon />
                             </Avatar>
                         </Grid>

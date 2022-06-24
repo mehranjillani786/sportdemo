@@ -93,7 +93,7 @@ export default function SessionDetail() {
                             <ArrowBackIcon />
                         </IconButton>
                         {location?.state?.group?.private_group?.picture !== "" ?
-                            <Avatar src={location?.state?.group?.private_group?.picture?.url} className={classes.small}>
+                            <Avatar src={"https://docker81177-sportlink.hidora.com"+location?.state?.group?.private_group?.picture?.url} className={classes.small}>
                                 <ImageIcon />
                             </Avatar>
                             :

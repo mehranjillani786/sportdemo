@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import { Hidden } from "@material-ui/core"; 
 import SessionDetails from "./components/sessions/SessionDetail";
-
+import "./App.css"
 function App() {
   return (
     <>
